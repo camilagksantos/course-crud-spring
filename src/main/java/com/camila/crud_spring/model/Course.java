@@ -9,8 +9,8 @@ import lombok.Data;
 public class Course {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(length = 30, nullable = false)
