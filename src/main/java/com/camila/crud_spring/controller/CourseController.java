@@ -60,6 +60,6 @@ public class CourseController {
         }
 
         courseRepository.deleteById(id);
-        return ResponseEntity.noContent().build(); // retorna 204 No Content
+        return ResponseEntity.noContent().build();
     }
 }
