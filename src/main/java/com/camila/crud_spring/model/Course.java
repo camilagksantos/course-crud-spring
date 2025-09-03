@@ -2,6 +2,8 @@ package com.camila.crud_spring.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -13,9 +15,12 @@ public class Course {
     @JsonProperty("_id")
     private Long id;
 
-    @Column(length = 30, nullable = false)
+    @NotBlank(message = "Name is required")
+    @Size(min = 5, max = 100, message = "Name must be between 5 and 100 characters")
+    @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(length = 25, nullable = false)
+    @NotBlank(message = "Category is required")
+    @Column(nullable = false)
     private String category;
 }
