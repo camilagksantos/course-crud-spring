@@ -1,7 +1,7 @@
 package com.camila.crud_spring.controller;
 
 import com.camila.crud_spring.model.Course;
-import com.camila.crud_spring.repository.CourseRepository;
+import com.camila.crud_spring.service.CourseService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -19,11 +19,19 @@ import java.util.List;
 @AllArgsConstructor
 public class CourseController {
 
-    private final CourseRepository courseRepository;
+    private final CourseService courseService;
 
     @GetMapping
     public ResponseEntity<List<Course>> list() {
-        var courses = courseRepository.findAll();
+        var courses = courseService.listActiveCourses();
+        return courses.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(courses);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Course>> listAll() {
+        var courses = courseService.listAllCourses();
         return courses.isEmpty()
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(courses);
@@ -31,41 +39,42 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Course> getById(@PathVariable @NotNull @Positive Long id) {
-        var course = courseRepository.findById(id);
-        return course.map(ResponseEntity::ok)
+        return courseService.findActiveById(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<Course> create(@RequestBody @Valid Course course) {
-        var savedCourse = courseRepository.save(course);
+        var savedCourse = courseService.createCourse(course);
         var location = URI.create("/api/courses/" + savedCourse.getId());
-
         return ResponseEntity.created(location).body(savedCourse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Course> update(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid Course course) {
-        if (course.getId() != null && !course.getId().equals(id)) {
+    public ResponseEntity<Course> update(
+            @PathVariable @NotNull @Positive Long id,
+            @RequestBody @Valid Course course) {
+        if (!courseService.validateIdConsistency(id, course)) {
             return ResponseEntity.badRequest().build();
         }
 
-        return courseRepository.findById(id)
-                .map(record -> {
-                    record.setName(course.getName());
-                    record.setCategory(course.getCategory());
-                    return ResponseEntity.ok(courseRepository.save(record));
-                })
-                .orElseGet(ResponseEntity.notFound()::build);
+        return courseService.updateCourse(id, course)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}/hard")
+    public ResponseEntity<Void> delete(@PathVariable @NotNull @Positive Long id) {
+        return courseService.hardDeleteCourse(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @NotNull @Positive Long id) {
-        var course = courseRepository.findById(id);
-        return course.map(c -> {
-                    courseRepository.delete(c);
-                    return ResponseEntity.noContent().<Void>build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Void> softDelete(@PathVariable @NotNull @Positive Long id) {
+        return courseService.softDeleteCourse(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
