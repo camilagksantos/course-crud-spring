@@ -39,9 +39,8 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Course> getById(@PathVariable @NotNull @Positive Long id) {
-        return courseService.findActiveById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Course course = courseService.findActiveById(id);
+        return ResponseEntity.ok(course);
     }
 
     @PostMapping
@@ -55,26 +54,24 @@ public class CourseController {
     public ResponseEntity<Course> update(
             @PathVariable @NotNull @Positive Long id,
             @RequestBody @Valid Course course) {
+
         if (!courseService.validateIdConsistency(id, course)) {
             return ResponseEntity.badRequest().build();
         }
 
-        return courseService.updateCourse(id, course)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Course updatedCourse = courseService.updateCourse(id, course);
+        return ResponseEntity.ok(updatedCourse);
     }
 
     @DeleteMapping("/{id}/hard")
     public ResponseEntity<Void> delete(@PathVariable @NotNull @Positive Long id) {
-        return courseService.hardDeleteCourse(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        courseService.hardDeleteCourse(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDelete(@PathVariable @NotNull @Positive Long id) {
-        return courseService.softDeleteCourse(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        courseService.softDeleteCourse(id);
+        return ResponseEntity.noContent().build();
     }
 }
