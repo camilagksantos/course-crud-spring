@@ -23,12 +23,9 @@ public class Course {
     @Column(length = 100, nullable = false)
     private String name;
 
-    @NotBlank(message = "Category is required")
     @Column(nullable = false)
     private Category category;
 
-    @NotBlank(message = "Status is required")
-    @Pattern(regexp = "Active|Inactive", message = "Status must be either 'Active' or 'Inactive'")
     @Column(nullable = false)
     private Status status = Status.ACTIVE;
 }
