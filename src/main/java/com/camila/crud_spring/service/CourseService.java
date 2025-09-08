@@ -7,10 +7,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@SuppressWarnings("java:S1192")
 public class CourseService {
 
     private static final String STATUS_ACTIVE = "Active";
