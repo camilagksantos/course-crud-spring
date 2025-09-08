@@ -1,6 +1,7 @@
 package com.camila.crud_spring.dto.mapper;
 
 import com.camila.crud_spring.dto.CourseDTO;
+import com.camila.crud_spring.enums.Status;
 import com.camila.crud_spring.model.Course;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ public class CourseMapper {
         course.setId(courseDTO.id());
         course.setName(courseDTO.name());
         course.setCategory(courseDTO.category());
+        course.setStatus(Status.ACTIVE);
         return course;
     }
 }

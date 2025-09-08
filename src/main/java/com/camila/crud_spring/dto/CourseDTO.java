@@ -1,5 +1,6 @@
 package com.camila.crud_spring.dto;
 
+import com.camila.crud_spring.enums.Category;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,6 +13,5 @@ public record CourseDTO(
         @Size(min = 5, max = 100, message = "Name must be between 5 and 100 characters")
         String name,
 
-        @NotBlank(message = "Category is required")
-        String category
+        Category category
 ) { }

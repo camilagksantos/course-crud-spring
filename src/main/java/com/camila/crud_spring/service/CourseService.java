@@ -1,5 +1,6 @@
 package com.camila.crud_spring.service;
 
+import com.camila.crud_spring.enums.Status;
 import com.camila.crud_spring.exception.RecordNotFoundException;
 import com.camila.crud_spring.model.Course;
 import com.camila.crud_spring.repository.CourseRepository;
@@ -19,7 +20,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
 
     public List<Course> listActiveCourses() {
-        return courseRepository.findByStatus(STATUS_ACTIVE);
+        return courseRepository.findByStatus(Status.ACTIVE);
     }
 
     public List<Course> listAllCourses() {
@@ -27,7 +28,7 @@ public class CourseService {
     }
 
     public Course findActiveById(Long id) {
-        return courseRepository.findByIdAndStatus(id, STATUS_ACTIVE)
+        return courseRepository.findByIdAndStatus(id, Status.ACTIVE)
                 .orElseThrow(() -> new RecordNotFoundException("Curso não encontrado com id: ", id));
     }
 
@@ -57,7 +58,7 @@ public class CourseService {
     public void softDeleteCourse(Long id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Curso não encontrado com id: ", id));
-        course.setStatus(STATUS_INACTIVE);
+        course.setStatus(Status.INACTIVE);
         courseRepository.save(course);
     }
 

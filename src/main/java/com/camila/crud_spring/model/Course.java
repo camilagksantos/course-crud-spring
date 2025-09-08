@@ -1,5 +1,7 @@
 package com.camila.crud_spring.model;
 
+import com.camila.crud_spring.enums.Category;
+import com.camila.crud_spring.enums.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -23,10 +25,10 @@ public class Course {
 
     @NotBlank(message = "Category is required")
     @Column(nullable = false)
-    private String category;
+    private Category category;
 
     @NotBlank(message = "Status is required")
     @Pattern(regexp = "Active|Inactive", message = "Status must be either 'Active' or 'Inactive'")
     @Column(nullable = false)
-    private String status = "Active";
+    private Status status = Status.ACTIVE;
 }
