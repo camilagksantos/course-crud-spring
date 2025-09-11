@@ -14,9 +14,6 @@ import java.util.List;
 @SuppressWarnings("java:S1192")
 public class CourseService {
 
-    private static final String STATUS_ACTIVE = "Active";
-    private static final String STATUS_INACTIVE = "Inactive";
-
     private final CourseRepository courseRepository;
 
     public List<Course> listActiveCourses() {
@@ -26,6 +23,7 @@ public class CourseService {
     public List<Course> listAllCourses() {
         return courseRepository.findAll();
     }
+
 
     public Course findActiveById(Long id) {
         return courseRepository.findByIdAndStatus(id, Status.ACTIVE)

@@ -1,5 +1,7 @@
 package com.camila.crud_spring.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Category {
     FRONTEND("Front-end"),
     BACKEND("Back-end"),
@@ -13,6 +15,7 @@ public enum Category {
         this.value = value;
     }
 
+    @JsonValue
     public String getValue() {
         return value;
     }

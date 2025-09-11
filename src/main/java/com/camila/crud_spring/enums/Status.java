@@ -1,5 +1,7 @@
 package com.camila.crud_spring.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Status {
     ACTIVE("Active"),
     INACTIVE("Inactive");
@@ -10,6 +12,7 @@ public enum Status {
         this.value = value;
     }
 
+    @JsonValue
     public String getValue() {
         return value;
     }
