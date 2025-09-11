@@ -539,3 +539,6 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: /Users/camilakfo
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 64 more
+2025-09-11 14:57:59.354968+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "YOUTUBE_URL CHARACTER VARYING(11)": "'zzzzzzzzzzzz' (12)"; SQL statement:
+update lesson set course_id=?,name=?,youtube_url=? where id=? [22001-232]
