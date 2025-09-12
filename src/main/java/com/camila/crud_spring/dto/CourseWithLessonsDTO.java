@@ -5,9 +5,7 @@ import com.camila.crud_spring.enums.Category;
 import java.util.List;
 
 public record CourseWithLessonsDTO(
-        Long id,
-        String name,
-        Category category,
+        CourseDTO course,
         List<LessonDTO> lessons
 ) {
 }

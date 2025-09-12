@@ -93,16 +93,12 @@ public class CourseController {
         var courses = courseService.listActiveCourses();
         var coursesWithLessons = courses.stream()
                 .map(course -> {
+                    var courseDTO = courseMapper.toCourseDTO(course);
                     var lessonDTOs = course.getLessons().stream()
                             .map(lessonMapper::toLessonDTO)
                             .toList();
 
-                    return new CourseWithLessonsDTO(
-                            course.getId(),
-                            course.getName(),
-                            course.getCategory(),
-                            lessonDTOs
-                    );
+                    return new CourseWithLessonsDTO(courseDTO, lessonDTOs);
                 })
                 .toList();
 
@@ -119,12 +115,8 @@ public class CourseController {
                 .map(lessonMapper::toLessonDTO)
                 .toList();
 
-        var courseWithLessons = new CourseWithLessonsDTO(
-                course.getId(),
-                course.getName(),
-                course.getCategory(),
-                lessonDTOs
-        );
+        var courseDTO = courseMapper.toCourseDTO(course);
+        var courseWithLessons = new CourseWithLessonsDTO(courseDTO, lessonDTOs);
 
         return ResponseEntity.ok(courseWithLessons);
     }
