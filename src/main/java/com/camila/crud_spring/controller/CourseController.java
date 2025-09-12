@@ -1,7 +1,9 @@
 package com.camila.crud_spring.controller;
 
 import com.camila.crud_spring.dto.CourseDTO;
+import com.camila.crud_spring.dto.CourseWithLessonsDTO;
 import com.camila.crud_spring.dto.mapper.CourseMapper;
+import com.camila.crud_spring.dto.mapper.LessonMapper;
 import com.camila.crud_spring.model.Course;
 import com.camila.crud_spring.service.CourseService;
 import jakarta.validation.Valid;
@@ -21,6 +23,7 @@ public class CourseController {
 
     private final CourseService courseService;
     private final CourseMapper courseMapper;
+    private final LessonMapper lessonMapper;
 
     @GetMapping
     public ResponseEntity<List<CourseDTO>> list() {
@@ -83,5 +86,46 @@ public class CourseController {
     public ResponseEntity<Void> softDelete(@PathVariable @NotNull @Positive Long id) {
         courseService.softDeleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/with-lessons")
+    public ResponseEntity<List<CourseWithLessonsDTO>> listWithLessons() {
+        var courses = courseService.listActiveCourses();
+        var coursesWithLessons = courses.stream()
+                .map(course -> {
+                    var lessonDTOs = course.getLessons().stream()
+                            .map(lessonMapper::toLessonDTO)
+                            .toList();
+
+                    return new CourseWithLessonsDTO(
+                            course.getId(),
+                            course.getName(),
+                            course.getCategory(),
+                            lessonDTOs
+                    );
+                })
+                .toList();
+
+        return coursesWithLessons.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(coursesWithLessons);
+    }
+
+    @GetMapping("/{id}/with-lessons")
+    public ResponseEntity<CourseWithLessonsDTO> getByIdWithLessons(@PathVariable @NotNull @Positive Long id) {
+        Course course = courseService.findActiveById(id);
+
+        var lessonDTOs = course.getLessons().stream()
+                .map(lessonMapper::toLessonDTO)
+                .toList();
+
+        var courseWithLessons = new CourseWithLessonsDTO(
+                course.getId(),
+                course.getName(),
+                course.getCategory(),
+                lessonDTOs
+        );
+
+        return ResponseEntity.ok(courseWithLessons);
     }
 }

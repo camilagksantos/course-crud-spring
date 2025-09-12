@@ -37,6 +37,5 @@ public class Course {
     private Status status = Status.ACTIVE;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "course")
-    @Valid
     private List<Lesson> lessons = new ArrayList<>();
 }
