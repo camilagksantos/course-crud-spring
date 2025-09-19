@@ -1,7 +1,8 @@
 package com.camila.crud_spring.controller;
 
 import com.camila.crud_spring.dto.CourseDTO;
-import com.camila.crud_spring.dto.CourseWithLessonsDTO;
+import com.camila.crud_spring.dto.CourseWithLessonRequestDTO;
+import com.camila.crud_spring.dto.CourseWithLessonsResponseDTO;
 import com.camila.crud_spring.dto.mapper.CourseMapper;
 import com.camila.crud_spring.dto.mapper.LessonMapper;
 import com.camila.crud_spring.model.Course;
@@ -52,28 +53,28 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<CourseDTO> create(@RequestBody @Valid CourseDTO courseDTO) {
+    public ResponseEntity<CourseWithLessonsResponseDTO> create(@RequestBody @Valid CourseWithLessonRequestDTO courseDTO) {
         var course = courseMapper.toCourse(courseDTO);
         var savedCourse = courseService.createCourse(course);
         var location = URI.create("/api/courses/" + savedCourse.getId());
 
-        return ResponseEntity.created(location).body(courseMapper.toCourseDTO(savedCourse));
+        return ResponseEntity.created(location)
+                .body(courseMapper.toCourseWithLessonsResponseDTO(savedCourse));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CourseDTO> update(
+    public ResponseEntity<CourseWithLessonsResponseDTO> update(
             @PathVariable @NotNull @Positive Long id,
-            @RequestBody @Valid CourseDTO courseDTO) {
+            @RequestBody @Valid CourseWithLessonRequestDTO courseDTO) {
 
         var course = courseMapper.toCourse(courseDTO);
         if (!courseService.validateIdConsistency(id, course)) {
-
             return ResponseEntity.badRequest().build();
         }
 
         Course updatedCourse = courseService.updateCourse(id, course);
 
-        return ResponseEntity.ok(courseMapper.toCourseDTO(updatedCourse));
+        return ResponseEntity.ok(courseMapper.toCourseWithLessonsResponseDTO(updatedCourse));
     }
 
     @DeleteMapping("/{id}/hard")
@@ -89,8 +90,8 @@ public class CourseController {
     }
 
     @GetMapping("/with-lessons")
-    public ResponseEntity<List<CourseWithLessonsDTO>> listWithLessons() {
-        var courses = courseService.listActiveCourses();
+    public ResponseEntity<List<CourseWithLessonsResponseDTO>> listWithLessons() {
+        var courses = courseService.listActiveCoursesWithLessons();
         var coursesWithLessons = courses.stream()
                 .map(course -> {
                     var courseDTO = courseMapper.toCourseDTO(course);
@@ -98,7 +99,7 @@ public class CourseController {
                             .map(lessonMapper::toLessonDTO)
                             .toList();
 
-                    return new CourseWithLessonsDTO(courseDTO, lessonDTOs);
+                    return new CourseWithLessonsResponseDTO(courseDTO, lessonDTOs);
                 })
                 .toList();
 
@@ -108,15 +109,15 @@ public class CourseController {
     }
 
     @GetMapping("/{id}/with-lessons")
-    public ResponseEntity<CourseWithLessonsDTO> getByIdWithLessons(@PathVariable @NotNull @Positive Long id) {
-        Course course = courseService.findActiveById(id);
+    public ResponseEntity<CourseWithLessonsResponseDTO> getByIdWithLessons(@PathVariable @NotNull @Positive Long id) {
+        Course course = courseService.findActiveByIdWithLessons(id);
 
         var lessonDTOs = course.getLessons().stream()
                 .map(lessonMapper::toLessonDTO)
                 .toList();
 
         var courseDTO = courseMapper.toCourseDTO(course);
-        var courseWithLessons = new CourseWithLessonsDTO(courseDTO, lessonDTOs);
+        var courseWithLessons = new CourseWithLessonsResponseDTO(courseDTO, lessonDTOs);
 
         return ResponseEntity.ok(courseWithLessons);
     }

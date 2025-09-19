@@ -36,6 +36,6 @@ public class Course {
     @Enumerated(EnumType.ORDINAL)
     private Status status = Status.ACTIVE;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "course")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "course", orphanRemoval = true)
     private List<Lesson> lessons = new ArrayList<>();
 }
