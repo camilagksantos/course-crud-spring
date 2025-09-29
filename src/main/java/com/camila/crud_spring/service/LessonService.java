@@ -6,9 +6,9 @@ import com.camila.crud_spring.model.Lesson;
 import com.camila.crud_spring.repository.CourseRepository;
 import com.camila.crud_spring.repository.LessonRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -18,12 +18,12 @@ public class LessonService {
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
 
-    public List<Lesson> listAllLessons() {
-        return lessonRepository.findAll();
+    public Page<Lesson> listAllLessons(Pageable pageable) {
+        return lessonRepository.findAll(pageable);
     }
 
-    public List<Lesson> listLessonsByCourse(Long courseId) {
-        return lessonRepository.findByCourseId(courseId);
+    public Page<Lesson> listLessonsByCourse(Long courseId, Pageable pageable) {
+        return lessonRepository.findByCourseId(courseId, pageable);
     }
 
     public Lesson findById(Long id) {

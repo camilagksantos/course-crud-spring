@@ -11,11 +11,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -27,19 +30,35 @@ public class CourseController {
     private final LessonMapper lessonMapper;
 
     @GetMapping
-    public ResponseEntity<List<CourseDTO>> list() {
-        var courses = courseService.listActiveCourses();
-        var courseDTOs = courses.stream().map(courseMapper::toCourseDTO).toList();
+    public ResponseEntity<Page<CourseDTO>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
 
-        return courses.isEmpty()
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+        Page<CourseDTO> courseDTOs = courseService.listActiveCourses(pageable)
+                .map(courseMapper::toCourseDTO);
+
+        return courseDTOs.isEmpty()
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(courseDTOs);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CourseDTO>> listAll() {
-        var courses = courseService.listAllCourses();
-        var courseDTOs = courses.stream().map(courseMapper::toCourseDTO).toList();
+    public ResponseEntity<Page<CourseDTO>> listAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
+
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+        Page<CourseDTO> courseDTOs = courseService.listAllCourses(pageable)
+                .map(courseMapper::toCourseDTO);
 
         return courseDTOs.isEmpty()
                 ? ResponseEntity.noContent().build()
@@ -90,9 +109,16 @@ public class CourseController {
     }
 
     @GetMapping("/with-lessons")
-    public ResponseEntity<List<CourseWithLessonsResponseDTO>> listWithLessons() {
-        var courses = courseService.listActiveCoursesWithLessons();
-        var coursesWithLessons = courses.stream()
+    public ResponseEntity<Page<CourseWithLessonsResponseDTO>> listWithLessons(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
+
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+        Page<CourseWithLessonsResponseDTO> coursesWithLessons = courseService.listActiveCoursesWithLessons(pageable)
                 .map(course -> {
                     var courseDTO = courseMapper.toCourseDTO(course);
                     var lessonDTOs = course.getLessons().stream()
@@ -100,8 +126,7 @@ public class CourseController {
                             .toList();
 
                     return new CourseWithLessonsResponseDTO(courseDTO, lessonDTOs);
-                })
-                .toList();
+                });
 
         return coursesWithLessons.isEmpty()
                 ? ResponseEntity.noContent().build()

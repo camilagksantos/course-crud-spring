@@ -8,11 +8,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/lessons")
@@ -23,21 +26,38 @@ public class LessonController {
     private final LessonMapper lessonMapper;
 
     @GetMapping
-    public ResponseEntity<List<LessonDTO>> list() {
-        var lessons = lessonService.listAllLessons();
-        var lessonDTOs = lessons.stream().map(lessonMapper::toLessonDTO).toList();
+    public ResponseEntity<Page<LessonDTO>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
 
-        return lessons.isEmpty()
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+        Page<LessonDTO> lessonDTOs = lessonService.listAllLessons(pageable)
+                .map(lessonMapper::toLessonDTO);
+
+        return lessonDTOs.isEmpty()
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(lessonDTOs);
     }
 
     @GetMapping("/course/{courseId}")
-    public ResponseEntity<List<LessonDTO>> listByCourse(@PathVariable @NotNull @Positive Long courseId) {
-        var lessons = lessonService.listLessonsByCourse(courseId);
-        var lessonDTOs = lessons.stream().map(lessonMapper::toLessonDTO).toList();
+    public ResponseEntity<Page<LessonDTO>> listByCourse(
+            @PathVariable @NotNull @Positive Long courseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
 
-        return lessons.isEmpty()
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+        Page<LessonDTO> lessonDTOs = lessonService.listLessonsByCourse(courseId, pageable)
+                .map(lessonMapper::toLessonDTO);
+
+        return lessonDTOs.isEmpty()
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(lessonDTOs);
     }

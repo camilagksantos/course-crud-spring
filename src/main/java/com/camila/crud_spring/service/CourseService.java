@@ -5,10 +5,10 @@ import com.camila.crud_spring.exception.RecordNotFoundException;
 import com.camila.crud_spring.model.Course;
 import com.camila.crud_spring.repository.CourseRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -18,22 +18,21 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
 
-    public List<Course> listActiveCourses() {
-        return courseRepository.findByStatus(Status.ACTIVE);
+    public Page<Course> listActiveCourses(Pageable pageable) {
+        return courseRepository.findByStatus(Status.ACTIVE, pageable);
     }
 
-    public List<Course> listActiveCoursesWithLessons() {
-        return courseRepository.findByStatusWithLessons(Status.ACTIVE);
+    public Page<Course> listActiveCoursesWithLessons(Pageable pageable) {
+        return courseRepository.findByStatusWithLessons(Status.ACTIVE, pageable);
     }
 
-    public List<Course> listAllCourses() {
-        return courseRepository.findAll();
+    public Page<Course> listAllCourses(Pageable pageable) {
+        return courseRepository.findAll(pageable);
     }
 
-    public List<Course> listAllCoursesWithLessons() {
-        return courseRepository.findAllWithLessons();
+    public Page<Course> listAllCoursesWithLessons(Pageable pageable) {
+        return courseRepository.findAllWithLessons(pageable);
     }
-
 
     public Course findActiveById(Long id) {
         return courseRepository.findByIdAndStatus(id, Status.ACTIVE)
