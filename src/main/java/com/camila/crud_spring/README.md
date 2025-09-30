@@ -96,6 +96,8 @@ The application follows a layered architecture pattern:
 
 4. **Access the application**
     - API: `http://localhost:8080/api`
+    - Swagger UI: `http://localhost:8080/swagger-ui.html`
+    - API Docs (JSON): `http://localhost:8080/v3/api-docs`
     - H2 Console: `http://localhost:8080/h2-console`
 
 ### H2 Database Configuration
@@ -105,6 +107,28 @@ The application follows a layered architecture pattern:
 **Password**: *(empty)*
 
 ## 📚 API Documentation
+
+### Interactive Documentation (Swagger)
+
+The API includes interactive documentation powered by Springdoc OpenAPI.
+
+**Access Swagger UI:**
+```
+http://localhost:8080/swagger-ui.html
+```
+
+**OpenAPI Specification (JSON):**
+```
+http://localhost:8080/v3/api-docs
+```
+
+**Features:**
+- ✅ Interactive API testing interface
+- ✅ Complete endpoint documentation
+- ✅ Request/response schemas
+- ✅ Parameter descriptions and examples
+- ✅ Authentication support (when implemented)
+- ✅ "Try it out" functionality for all endpoints
 
 ### Base URL
 ```
@@ -317,12 +341,12 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
-  
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    
+
   h2:
     console:
       enabled: true
