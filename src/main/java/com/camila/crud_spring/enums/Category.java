@@ -7,7 +7,12 @@ public enum Category {
     BACKEND("Back-end"),
     DATA_SCIENCE("Data Science"),
     DEVOPS("DevOps"),
-    DATABASE("Banco de Dados");
+    DATABASE("Banco de Dados"),
+    MOBILE("Mobile"),
+    CLOUD("Cloud Computing"),
+    SECURITY("Segurança"),
+    DESIGN("Design"),
+    TESTING("Testes");
 
     private final String value;
 
