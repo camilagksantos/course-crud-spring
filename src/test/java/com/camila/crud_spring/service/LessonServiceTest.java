@@ -91,9 +91,7 @@ class LessonServiceTest {
         when(courseRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(RecordNotFoundException.class, () -> {
-            lessonService.createLesson(lesson, 999L);
-        });
+        assertThrows(RecordNotFoundException.class, () -> lessonService.createLesson(lesson, 999L));
         verify(courseRepository, times(1)).findById(999L);
         verify(lessonRepository, never()).save(any(Lesson.class));
     }
@@ -122,9 +120,7 @@ class LessonServiceTest {
         when(lessonRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(RecordNotFoundException.class, () -> {
-            lessonService.findById(999L);
-        });
+        assertThrows(RecordNotFoundException.class, () -> lessonService.findById(999L));
         verify(lessonRepository, times(1)).findById(999L);
     }
 
@@ -156,9 +152,7 @@ class LessonServiceTest {
         when(lessonRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(RecordNotFoundException.class, () -> {
-            lessonService.updateLesson(999L, updateData);
-        });
+        assertThrows(RecordNotFoundException.class, () -> lessonService.updateLesson(999L, updateData));
         verify(lessonRepository, times(1)).findById(999L);
         verify(lessonRepository, never()).save(any(Lesson.class));
     }
@@ -185,9 +179,7 @@ class LessonServiceTest {
         when(lessonRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(RecordNotFoundException.class, () -> {
-            lessonService.deleteLesson(999L);
-        });
+        assertThrows(RecordNotFoundException.class, () -> lessonService.deleteLesson(999L));
         verify(lessonRepository, times(1)).findById(999L);
         verify(lessonRepository, never()).delete(any(Lesson.class));
     }
@@ -207,7 +199,7 @@ class LessonServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        assertEquals("Introduction to Angular", result.getContent().get(0).getName());
+        assertEquals("Introduction to Angular", result.getContent().getFirst().getName());
         verify(lessonRepository, times(1)).findAll(pageable);
     }
 
@@ -226,7 +218,7 @@ class LessonServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        assertEquals("Introduction to Angular", result.getContent().get(0).getName());
+        assertEquals("Introduction to Angular", result.getContent().getFirst().getName());
         verify(lessonRepository, times(1)).findByCourseId(1L, pageable);
     }
 
